@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+// Route dasar
 Route::get('/hello', function () {
     return "Hello";
 });
@@ -30,69 +31,67 @@ Route::get('/about', function () {
     return "NIM: 2341760021 - Nama: Muhammad Eksa";
 });
 
+// Route dengan parameter
 Route::get('/user/{name}', function ($name) {
-    return 'Nama saya ' .$name;
+    return 'Nama saya ' . $name;
 });
 
 Route::get('/posts/{post}/comments/{comment}', function ($post, $comment) {
-    return 'Pos ke-' . $post . " Komentar ke-: " . $comment;
+    return 'Pos ke-' . $post . " Komentar ke-" . $comment;
 });
-
 
 Route::get('/articles/{id}', function ($id) {
     return 'Halaman Artikel dengan ID ' . $id;
 });
 
-Route::get('/user/{name?}', function ($name='John') {
-    return 'Nama saya '.$name;
+// Route dengan parameter opsional
+Route::get('/user/{name?}', function ($name = 'John') {
+    return 'Nama saya ' . $name;
 });
 
-Route::get('/user/profile', function () {
-    //
-})->name('profile');
+// Route profile dengan nama yang benar
+Route::get('/user/profile', [UserProfileController::class, 'show'])->name('user.profile');
 
-Route::get(
-    '/user/profile',
-    [UserProfileController::class, 'show']
-)->name('profile');
+// Redirect dan generate URL dengan nama yang benar
+Route::get('/redirect-profile', function () {
+    return redirect()->route('user.profile');
+});
 
-// Generating URLs...
-$url = route('profile');
-
-// Generating Redirects...
-return redirect()->route('profile');
-
+// Grouping Middleware
 Route::middleware(['first', 'second'])->group(function () {
     Route::get('/', function () {
         // Uses first & second middleware...
     });
 
-Route::get('/user/profile', function () {
+    Route::get('/user/profile', function () {
         // Uses first & second middleware...
     });
 });
 
+// Subdomain routing
 Route::domain('{account}.example.com')->group(function () {
     Route::get('user/{id}', function ($account, $id) {
-        //
+        return "Account: $account, User ID: $id";
     });
 });
 
+// Middleware auth untuk user, post, event
 Route::middleware('auth')->group(function () {
-	Route::get('/user', [UserController::class, 'index']);
-	Route::get('/post', [PostController::class, 'index']);
-	Route::get('/event', [EventController::class, 'index']);
-	
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/post', [PostController::class, 'index']);
+    Route::get('/event', [EventController::class, 'index']);
 });
 
+// Prefix admin
 Route::prefix('admin')->group(function () {
-	Route::get('/user', [UserController::class, 'index']);
-	Route::get('/post', [PostController::class, 'index']);
-	Route::get('/event', [EventController::class, 'index']);
-
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/post', [PostController::class, 'index']);
+    Route::get('/event', [EventController::class, 'index']);
 });
 
+// Redirect
 Route::redirect('/here', '/there');
 
+// View route
 Route::view('/welcome', 'welcome');
 Route::view('/welcome', 'welcome', ['name' => 'Taylor']);
