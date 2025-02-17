@@ -103,3 +103,5 @@ Route::redirect('/here', '/there');
 // View route
 Route::view('/welcome', 'welcome');
 Route::view('/welcome', 'welcome', ['name' => 'Taylor']);
+
+Route::get('/greeting', [WelcomeController::class, 'greeting']);
